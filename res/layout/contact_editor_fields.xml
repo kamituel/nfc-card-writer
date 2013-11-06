@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/pl.kamituel.nfcbusinesscardwriter"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <pl.kamituel.nfcbusinesscardwriter.ui.TypefacedTextView
+        style="@style/InputHeading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Imię i nazwisko" />
+
+    <AutoCompleteTextView
+        android:id="@+id/nameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/name"
+        android:text="aaaKmail" />
+
+    <pl.kamituel.nfcbusinesscardwriter.ui.TypefacedTextView
+        style="@style/InputHeading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Telefon" />
+
+    <EditText
+        android:id="@+id/phoneEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/phone"
+        android:inputType="text|phone"
+        android:text="6022090000" />
+
+    <pl.kamituel.nfcbusinesscardwriter.ui.TypefacedTextView
+        style="@style/InputHeading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Email" />
+
+    <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
+        android:text="kamiituel@gmaail.coom" />
+
+</LinearLayout>

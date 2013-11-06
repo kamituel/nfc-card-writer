@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">NFC Business Card Writer</string>
+    <string name="action_settings">Settings</string>
+    
+    <string name="name">Imię i nazwisko</string>
+    <string name="email">Email</string>
+    <string name="phone">Telefon</string>
+    
+    <string name="write_tag">Zapisz tag NFC</string>
+
+    <string name="no_nfc_present">Brak modułu NFC</string>
+    <string name="nfc_disabled">NFC wyłączone</string>
+</resources>
