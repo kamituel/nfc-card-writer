@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">NFC Business Card Writer</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">Wizytówki NFC</string>
+    <string name="explanation">Wypełnij powyższe pola. Następnie przyłóż wizytówkę NFC do tylnej ściany tego telefonu lub tabletu, a wizytówka zostanie nadpisana.</string>
     
     <string name="name">Imię i nazwisko</string>
     <string name="email">Email</string>
     <string name="phone">Telefon</string>
-    
-    <string name="write_tag">Zapisz tag NFC</string>
-
+ 
     <string name="no_nfc_present">Brak modułu NFC</string>
     <string name="nfc_disabled">NFC wyłączone</string>
+    
+    <string name="add">Dodaj</string>
+    
+    <string name="write_nfc_tag">Zapisz tag NFC</string>
+    <string name="write_nfc_tag_explanation">Zbliż tag NFC do tylnej ściany telefonu/tabletu.</string>
+    <string name="nfc_tag_written">Wizytówka NFC zapisana pomyślnie</string>
 </resources>

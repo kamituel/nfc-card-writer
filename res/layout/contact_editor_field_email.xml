@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res/pl.kamituel.nfcbusinesscardwriter"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <pl.kamituel.nfcbusinesscardwriter.ui.ClearableEditText
+        android:id="@+id/emailEditText"
+        style="@style/Input"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress" />
+
+    <!-- <ImageButton
+        android:id="@+id/removeEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:src="@drawable/ic_clear_normal" />  -->
+ 
+</LinearLayout>

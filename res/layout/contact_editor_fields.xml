@@ -5,45 +5,87 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <pl.kamituel.nfcbusinesscardwriter.ui.TypefacedTextView
-        style="@style/InputHeading"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Imię i nazwisko" />
+        android:layout_height="wrap_content" >
 
-    <AutoCompleteTextView
-        android:id="@+id/nameEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/name"
-        android:text="aaaKmail" />
+        <pl.kamituel.nfcbusinesscardwriter.ui.TypefacedTextView
+            style="@style/InputHeading"
+            android:layout_width="@dimen/heading_width"
+            android:layout_height="wrap_content"
+            android:text="Imię i nazwisko" />
 
-    <pl.kamituel.nfcbusinesscardwriter.ui.TypefacedTextView
-        style="@style/InputHeading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Telefon" />
+        <AutoCompleteTextView
+            android:id="@+id/nameEditText"
+            style="@style/Input"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/name" />
+    </LinearLayout>
 
-    <EditText
-        android:id="@+id/phoneEditText"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/phone"
-        android:inputType="text|phone"
-        android:text="6022090000" />
+        android:layout_height="wrap_content" >
 
-    <pl.kamituel.nfcbusinesscardwriter.ui.TypefacedTextView
-        style="@style/InputHeading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Email" />
+        <pl.kamituel.nfcbusinesscardwriter.ui.TypefacedTextView
+            android:id="@+id/phoneHeading"
+            style="@style/InputHeading"
+            android:layout_width="@dimen/heading_width"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="Telefon" />
 
-    <EditText
-        android:id="@+id/emailEditText"
+        <pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList
+            android:id="@+id/phoneList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/phoneHeading"
+            android:orientation="vertical" >
+        </pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList>
+
+        <Button
+            android:id="@+id/addAnotherPhone"
+            style="@style/AddButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/phoneHeading"
+            android:layout_margin="0dp"
+            android:text="@string/add" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/email"
-        android:inputType="textEmailAddress"
-        android:text="kamiituel@gmaail.coom" />
+        android:layout_height="wrap_content" >
+
+        <pl.kamituel.nfcbusinesscardwriter.ui.TypefacedTextView
+            android:id="@+id/emailHeading"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            style="@style/InputHeading"
+            android:layout_width="@dimen/heading_width"
+            android:layout_height="wrap_content"
+            android:text="Email" />
+
+        <pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList
+            android:id="@+id/emailList"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/emailHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList>
+
+        <Button
+            android:id="@+id/addAnotherEmail"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/emailHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add" />
+    </RelativeLayout>
 
 </LinearLayout>
