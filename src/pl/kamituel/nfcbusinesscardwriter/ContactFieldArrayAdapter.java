@@ -2,7 +2,7 @@ package pl.kamituel.nfcbusinesscardwriter;
 
 import java.util.ArrayList;
 
-import pl.kamituel.nfcbusinesscardwriter.ContactCursor.ValueType;
+import pl.kamituel.nfcbusinesscardwriter.ContactCursorHelper.ValueType;
 import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText;
 import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText.OnIconClickListener;
 import android.content.Context;

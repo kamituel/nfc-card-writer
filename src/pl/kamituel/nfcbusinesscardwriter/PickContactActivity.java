@@ -2,17 +2,19 @@ package pl.kamituel.nfcbusinesscardwriter;
 
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class PickContactActivity extends Activity implements OnItemClickListener {
 	private static final String TAG = PickContactActivity.class.getCanonicalName();
@@ -73,7 +75,13 @@ public class PickContactActivity extends Activity implements OnItemClickListener
 
 			switch(loaderId) {
 			case CONTACT_LOADER:
-				return new ContactCursor(PickContactActivity.this).getCursorLoaderByDisplayName(mQuery);
+				Uri uri =  ContactsContract.Contacts.CONTENT_URI;
+				String[] projection = null;
+				String selection = ContactsContract.Contacts.DISPLAY_NAME + " LIKE '%" + mQuery + "%'";
+				String[] selectionArgs = null;
+				String sortOrder = null;
+				
+				return new CursorLoader(PickContactActivity.this, uri, projection, selection, selectionArgs, sortOrder);
 			default:
 				return null;
 			}

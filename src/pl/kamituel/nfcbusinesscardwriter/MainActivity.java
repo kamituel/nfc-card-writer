@@ -2,14 +2,13 @@ package pl.kamituel.nfcbusinesscardwriter;
 
 import java.io.IOException;
 
-import pl.kamituel.nfcbusinesscardwriter.ContactCursor.ValueType;
+import pl.kamituel.nfcbusinesscardwriter.ContactCursorHelper.ValueType;
 import pl.kamituel.nfcbusinesscardwriter.ContactFieldArrayAdapter.OnAddNewItemTextChangedListener;
 import pl.kamituel.nfcbusinesscardwriter.NdefContact.Builder;
 import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText;
 import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText.OnIconClickListener;
 import pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList;
 import android.content.Intent;
-import android.database.Cursor;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -17,7 +16,6 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -81,16 +79,13 @@ implements OnIconClickListener {
 		});	
 	}
 	
-	private void populateEditorFields(Cursor contact) {
-		long contactId = contact.getLong(contact.getColumnIndex(ContactsContract.Contacts._ID));
-		ContactCursor contactCursor = new ContactCursor(this);
+	private void populateEditorFields(ContactCursorHelper contact) {
+		((IconEditText) findViewById(R.id.nameEditText)).setText(contact.getDisplayName());
 		
-		((IconEditText) findViewById(R.id.nameEditText)).setText(contactCursor.getDisplayName(contact));
-		
-		ValueType[] phones = contactCursor.getPhoneNumbers(contactId);
+		ValueType[] phones = contact.getPhoneNumbers();
 		mPhonesAdapter.addAll(phones);
 
-		ValueType[] emails = contactCursor.getEmailAddresses(contactId);
+		ValueType[] emails = contact.getEmailAddresses();
 		mEmailsAdapter.addAll(emails);
 	}
 
@@ -171,12 +166,11 @@ implements OnIconClickListener {
 		switch (requestCode) {
 		case PICK_CONTACT_REQUEST_CODE:
 			if (RESULT_OK == resultCode) {
-				ContactCursor contactCursor = new ContactCursor(this);
 				String contactLookupKey = data.getStringExtra(PickContactActivity.EXTRA_CONTACT_LOOKUP_KEY);
-				Cursor contact = contactCursor.getCursorByLookupKey(contactLookupKey);
+				ContactCursorHelper contact = ContactCursorHelper.byLookupKey(this, contactLookupKey);
 				
-				Log.d(TAG, "Found " + contactLookupKey + contact.getString(contact.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
-				populateEditorFields(contact);				
+				Log.d(TAG, "Found " + contactLookupKey + contact.getDisplayName());
+				populateEditorFields(contact);
 			}
 			break;
 		default:
