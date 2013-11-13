@@ -2,6 +2,7 @@ package pl.kamituel.nfcbusinesscardwriter.ui;
 
 import pl.kamituel.nfcbusinesscardwriter.R;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -10,33 +11,39 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.EditText;
 
-public class ClearableEditText extends EditText implements OnTouchListener {
+public class IconEditText extends EditText implements OnTouchListener {
 
+	private int mRightCompoundDrawableId;
 	private Drawable mRightCompoundDrawable;
-	private OnClearListener mClearListener;
+	private OnIconClickListener mOnIconClickListener;
 	
-	public static interface OnClearListener {
-		public void textCleared(View v);
+	public static interface OnIconClickListener {
+		public void iconClicked(IconEditText v);
 	}
 	
-	public ClearableEditText(Context context, AttributeSet attrs) {
+	public IconEditText(Context context, AttributeSet attrs) {
 		super(context, attrs);
+		
+		TypedArray styledAttrs = context.obtainStyledAttributes(attrs, R.styleable.IconEditText);
+		mRightCompoundDrawableId = styledAttrs.getResourceId(R.styleable.TypefacedTextView_typeface, R.drawable.ic_clear_normal);
+        styledAttrs.recycle();
+		
 		init();
 	}
 	
-	public void setOnClearListener (OnClearListener listener) {
-		mClearListener = listener;
+	public void setOnIconClickListener (OnIconClickListener listener) {
+		mOnIconClickListener = listener;
 	}
 	
 	protected void init() {
 		mRightCompoundDrawable = getCompoundDrawables()[2];
 		if (mRightCompoundDrawable == null) {
-			mRightCompoundDrawable = getResources().getDrawable(R.drawable.ic_clear_normal);
+			mRightCompoundDrawable = getResources().getDrawable(mRightCompoundDrawableId);
 		}
 		
 		Log.d("xxx", "w,h" + mRightCompoundDrawable.getIntrinsicWidth() + " , " + getWidth());
-		mRightCompoundDrawable.setBounds(0, 0, mRightCompoundDrawable.getIntrinsicWidth(), mRightCompoundDrawable.getIntrinsicHeight());
-		setClearIconVisible(false);
+		mRightCompoundDrawable.setBounds(0, 0, 30, 30);
+		setIconVisible(false);
 		
 		setOnTouchListener(this);
 	}
@@ -46,10 +53,10 @@ public class ClearableEditText extends EditText implements OnTouchListener {
 			int lengthBefore, int lengthAfter) {
 		super.onTextChanged(text, start, lengthBefore, lengthAfter);
 		
-		setClearIconVisible(getText().length() > 0);
+		setIconVisible(getText().length() > 0);
 	}
 
-	protected void setClearIconVisible (boolean visible) {
+	protected void setIconVisible (boolean visible) {
 		Drawable right = visible ? mRightCompoundDrawable : null;
 		setCompoundDrawables(getCompoundDrawables()[0], getCompoundDrawables()[1], 
 				right, getCompoundDrawables()[3]);
@@ -58,11 +65,10 @@ public class ClearableEditText extends EditText implements OnTouchListener {
 	@Override
 	public boolean onTouch(View v, MotionEvent event) {
 		if (getCompoundDrawables()[2] != null) {
-			boolean tappedClearButton = event.getX() > (getWidth() - getPaddingRight() - mRightCompoundDrawable.getIntrinsicWidth());
-			if (tappedClearButton) {
+			boolean tappedIcon = event.getX() > (getWidth() - getPaddingRight() - mRightCompoundDrawable.getIntrinsicWidth());
+			if (tappedIcon) {
 				if (MotionEvent.ACTION_UP == event.getAction()) {
-					setText("");
-					notifyListener();
+					notifyOnIconClickListener();
 				}
 				return true;
 			}
@@ -70,9 +76,9 @@ public class ClearableEditText extends EditText implements OnTouchListener {
 		return false;
 	}
 
-	protected void notifyListener () {
-		if (mClearListener != null) {
-			mClearListener.textCleared(this);
+	protected void notifyOnIconClickListener () {
+		if (mOnIconClickListener != null) {
+			mOnIconClickListener.iconClicked(this);
 		}
 	}
 	

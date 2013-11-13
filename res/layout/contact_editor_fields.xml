@@ -15,13 +15,14 @@
             android:layout_height="wrap_content"
             android:text="Imię i nazwisko" />
 
-        <AutoCompleteTextView
+        <pl.kamituel.nfcbusinesscardwriter.ui.IconEditText
             android:id="@+id/nameEditText"
             style="@style/Input"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="@string/name" />
+            android:hint="@string/name"
+            custom:icon="@drawable/ic_menu_search_holo_light" />
     </LinearLayout>
 
     <RelativeLayout

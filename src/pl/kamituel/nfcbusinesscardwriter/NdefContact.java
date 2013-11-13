@@ -9,6 +9,9 @@ import android.util.Log;
 public class NdefContact {
 	private String mVcard;
 	
+	private static final String VCARD_HEADER = "BEGIN:VCARD\nVERSION:2.1\n";
+	private static final String VCARD_FOOTER = "END:VCARD";
+	
 	private NdefContact (String vcard) {
 		Log.w("xxx", vcard);
 		mVcard = vcard;
@@ -27,8 +30,7 @@ public class NdefContact {
 		private StringBuilder mVcard = new StringBuilder();
 		
 		public Builder () {
-			mVcard.append("BEGIN:VCARD\n");
-			mVcard.append("VERSION:2.1\n");
+			mVcard.append(VCARD_HEADER);
 		}
 		
 		public Builder appendPhone (String type, String number) {
@@ -59,7 +61,7 @@ public class NdefContact {
 		}
 		
 		public NdefContact build () {
-			mVcard.append("END:VCARD");
+			mVcard.append(VCARD_FOOTER);
 			return new NdefContact(mVcard.toString());
 		}
 	}

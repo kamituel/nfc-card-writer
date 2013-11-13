@@ -27,7 +27,6 @@ public class NfcRequiredActivity extends Activity {
 		}
 	}
 
-
 	@Override
 	protected void onStop() {
 		super.onStop();

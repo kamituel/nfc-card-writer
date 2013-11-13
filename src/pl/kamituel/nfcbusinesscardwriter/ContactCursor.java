@@ -37,7 +37,7 @@ public class ContactCursor {
 		mCtx = ctx;
 	}
 	
-	public Cursor getCursorByDisplayName(String name) {
+	/*public Cursor getCursorByDisplayName(String name) {
 		Uri uri =  ContactsContract.Contacts.CONTENT_URI;
 		String[] projection = null;
 		String selection = C_DISPLAY_NAME + " LIKE '%" + name + "%' AND " + C_DISPLAY_NAME + " NOT LIKE '%@%' AND " + C_HAS_PHONE_NUMBER + "=1";
@@ -48,6 +48,21 @@ public class ContactCursor {
 		if (c == null || !c.moveToFirst()) return null;
 		
 		return c;
+	}*/
+	
+	public Cursor getCursorByLookupKey(String lookupKey) {
+		Uri contactUri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_LOOKUP_URI, Uri.encode("" + lookupKey));
+		Cursor contact = mCtx.getContentResolver().query(contactUri, null, null, null, null, null);
+		
+		if (!contact.moveToFirst()) {
+			return null;
+		}
+		
+		return contact;
+	}
+	
+	public String getDisplayName (Cursor contact) {
+		return contact.getString(contact.getColumnIndex(C_DISPLAY_NAME));
 	}
 	
 	public CursorLoader getCursorLoaderByDisplayName(String name) {

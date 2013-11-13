@@ -5,10 +5,10 @@ import java.io.IOException;
 import pl.kamituel.nfcbusinesscardwriter.ContactCursor.ValueType;
 import pl.kamituel.nfcbusinesscardwriter.ContactFieldArrayAdapter.OnAddNewItemTextChangedListener;
 import pl.kamituel.nfcbusinesscardwriter.NdefContact.Builder;
+import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText;
+import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText.OnIconClickListener;
 import pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
@@ -23,48 +23,41 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FilterQueryProvider;
-import android.widget.SimpleCursorAdapter;
-import android.widget.SimpleCursorAdapter.CursorToStringConverter;
 import android.widget.Toast;
 
 public class MainActivity extends NfcRequiredActivity 
-implements /*OnClickListener,*/ LoaderCallbacks<Cursor> {
-
-	private final static int CONTACT_SUGGESTIONS_LOADER = 1;
-	private SimpleCursorAdapter mNameAutocompleteAdapter;
-	private ContactCursor mContactCursor;
+implements OnIconClickListener {
+	private final static String TAG = MainActivity.class.getCanonicalName();
 
 	private ContactFieldArrayAdapter mPhonesAdapter;
 	private ContactFieldArrayAdapter mEmailsAdapter;
+
+	private final static int PICK_CONTACT_REQUEST_CODE = 1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		//((Button) findViewById(R.id.writeTagButton)).setOnClickListener(this);
-		setupAutocomplete();
+		IconEditText name = (IconEditText) findViewById(R.id.nameEditText);
+		name.setOnIconClickListener(this);
 
 		mPhonesAdapter = new ContactFieldArrayAdapter(this, R.layout.contact_editor_field_phone, R.id.phoneEditText);
 		setupFieldList(R.id.phoneList, mPhonesAdapter, R.id.addAnotherPhone);
-		
+
 		mEmailsAdapter = new ContactFieldArrayAdapter(this, R.layout.contact_editor_field_email, R.id.emailEditText);
 		setupFieldList(R.id.emailList, mEmailsAdapter, R.id.addAnotherEmail);
 	}
 
 	private void setupFieldList (int listId, final ContactFieldArrayAdapter adapter, int addNewButtonId) {
 		adapter.add(new ValueType("", ""));
-		
+
 		final Button addNewItem = (Button) findViewById(addNewButtonId);
 		LinearLayoutList phones = (LinearLayoutList) findViewById(listId);
 		phones.setAdapter(adapter);
-		
+
 		adapter.setAddNewItemPopulatedListener(new OnAddNewItemTextChangedListener() {
 			@Override
 			public void onTextInserted() {
@@ -76,8 +69,8 @@ implements /*OnClickListener,*/ LoaderCallbacks<Cursor> {
 				addNewItem.setVisibility(View.GONE);
 			}
 		});
-		
-		
+
+
 		addNewItem.setVisibility(View.GONE);
 		addNewItem.setOnClickListener(new OnClickListener() {
 			@Override
@@ -88,51 +81,17 @@ implements /*OnClickListener,*/ LoaderCallbacks<Cursor> {
 		});	
 	}
 	
-	private void setupAutocomplete() {
-		mContactCursor = new ContactCursor(this);
+	private void populateEditorFields(Cursor contact) {
+		long contactId = contact.getLong(contact.getColumnIndex(ContactsContract.Contacts._ID));
+		ContactCursor contactCursor = new ContactCursor(this);
+		
+		((IconEditText) findViewById(R.id.nameEditText)).setText(contactCursor.getDisplayName(contact));
+		
+		ValueType[] phones = contactCursor.getPhoneNumbers(contactId);
+		mPhonesAdapter.addAll(phones);
 
-		AutoCompleteTextView nameEditText = (AutoCompleteTextView) findViewById(R.id.nameEditText);
-		getLoaderManager().initLoader(CONTACT_SUGGESTIONS_LOADER, null, this);
-		mNameAutocompleteAdapter = new SimpleCursorAdapter(this, R.layout.name_autocomplete_item, null, new String[] {ContactsContract.Contacts.DISPLAY_NAME}, new int[] {R.id.name});
-
-		mNameAutocompleteAdapter.setFilterQueryProvider(new FilterQueryProvider() {
-			@Override
-			public Cursor runQuery(CharSequence constraint) {
-				return new ContactCursor(MainActivity.this).getCursorByDisplayName(constraint.toString());
-			}
-		});
-
-		mNameAutocompleteAdapter.setCursorToStringConverter(new CursorToStringConverter() {
-			@Override
-			public CharSequence convertToString(Cursor cursor) {
-				return cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-			}
-		});
-
-		nameEditText.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Log.d("xxx", "selected " + position + " - " + id);
-				Cursor cursor = mNameAutocompleteAdapter.getCursor();
-				cursor.moveToPosition(position);
-				long contactId = cursor.getLong(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-
-				ValueType[] phones = mContactCursor.getPhoneNumbers(contactId);
-				mPhonesAdapter.addAll(phones);
-
-				ValueType[] emails = mContactCursor.getEmailAddresses(contactId);
-				mEmailsAdapter.addAll(emails);
-
-				/*String[] phones = mContactCursor.getPhoneNumbers(contactId);				
-				setEditTextValue(R.id.emailEditText, phones.length == 0 ? "" : phones[0]);
-
-				String[] emails = mContactCursor.getEmailAddresses(contactId);
-				setEditTextValue(R.id.emailEditText, emails.length == 0 ? "" : emails[0]);*/
-			}
-		});
-
-
-		nameEditText.setAdapter(mNameAutocompleteAdapter);
+		ValueType[] emails = contactCursor.getEmailAddresses(contactId);
+		mEmailsAdapter.addAll(emails);
 	}
 
 	@Override
@@ -140,20 +99,20 @@ implements /*OnClickListener,*/ LoaderCallbacks<Cursor> {
 		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
 			Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 			NdefContact.Builder builder = new NdefContact.Builder()
-				.appendName(getEditTextValue(R.id.nameEditText));
-			
+			.appendName(getEditTextValue(R.id.nameEditText));
+
 			for (int p = 0; p < mPhonesAdapter.getCount(); p += 1) {
 				if (mPhonesAdapter.getItem(p).getValue().length() > 0) {
 					builder.appendPhone(Builder.PHONE_TYPE_HOME, mPhonesAdapter.getItem(p).getValue());
 				}
 			}
-			
+
 			for (int p = 0; p < mEmailsAdapter.getCount(); p += 1) {
 				if (mEmailsAdapter.getItem(p).getValue().length() > 0) {
 					builder.appendEmail(mEmailsAdapter.getItem(p).getValue());
 				}
 			}
-			
+
 			NdefRecord[] records = { builder.build().toNdefRecord() };
 			NdefMessage message = new NdefMessage(records);
 
@@ -192,48 +151,36 @@ implements /*OnClickListener,*/ LoaderCallbacks<Cursor> {
 		}
 	}
 
-
-	/*@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.writeTagButton:
-			writeTag();
-			break;
-		}
-	}
-
-	private void writeTag () {
-
-	}*/
-
-
-
 	private String getEditTextValue (int id) {
 		return ((EditText) findViewById(id)).getText().toString();
 	}
 
-	private void setEditTextValue (int id, String value) {
-		((EditText) findViewById(id)).setText(value);
-	}
-
 	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		switch (id) {
-		case CONTACT_SUGGESTIONS_LOADER:
-			return new ContactCursor(this).getCursorLoaderByDisplayName(null);
-		default:
-			return null;
+	public void iconClicked(IconEditText v) {
+		if (R.id.nameEditText == v.getId()) {
+			Intent pickContact = new Intent(this, PickContactActivity.class);
+			pickContact.putExtra(PickContactActivity.QUERY_BY_NAME, v.getText().toString());
+			startActivityForResult(pickContact, PICK_CONTACT_REQUEST_CODE);
 		}
 	}
 
 	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		Log.d("xxx", "Loaded " + cursor.getCount());
-		mNameAutocompleteAdapter.swapCursor(cursor);
-	}
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 
-	@Override
-	public void onLoaderReset(Loader<Cursor> arg0) {
-		Log.d("xxx", "abecadlo");
+		switch (requestCode) {
+		case PICK_CONTACT_REQUEST_CODE:
+			if (RESULT_OK == resultCode) {
+				ContactCursor contactCursor = new ContactCursor(this);
+				String contactLookupKey = data.getStringExtra(PickContactActivity.EXTRA_CONTACT_LOOKUP_KEY);
+				Cursor contact = contactCursor.getCursorByLookupKey(contactLookupKey);
+				
+				Log.d(TAG, "Found " + contactLookupKey + contact.getString(contact.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
+				populateEditorFields(contact);				
+			}
+			break;
+		default:
+			Log.w("xxx", "Invalid request code: " + requestCode);
+		}
 	}
 }

@@ -3,21 +3,19 @@ package pl.kamituel.nfcbusinesscardwriter;
 import java.util.ArrayList;
 
 import pl.kamituel.nfcbusinesscardwriter.ContactCursor.ValueType;
-import pl.kamituel.nfcbusinesscardwriter.ui.ClearableEditText;
-import pl.kamituel.nfcbusinesscardwriter.ui.ClearableEditText.OnClearListener;
+import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText;
+import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText.OnIconClickListener;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 
-public class ContactFieldArrayAdapter extends BaseAdapter /*implements OnClickListener*/ implements OnClearListener {	
+public class ContactFieldArrayAdapter extends BaseAdapter /*implements OnClickListener*/ implements OnIconClickListener {	
 	private final ArrayList<ValueType> mItems = new ArrayList<ValueType>();
 	private LayoutInflater mInflater;
 	
@@ -85,7 +83,7 @@ public class ContactFieldArrayAdapter extends BaseAdapter /*implements OnClickLi
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ValueType item = getItem(position);
 		View view = mInflater.inflate(mRootLayoutId, parent, false);
-		ClearableEditText value = (ClearableEditText) view.findViewById(mEditTextId);
+		IconEditText value = (IconEditText) view.findViewById(mEditTextId);
 		value.setTag(position);
 		
 		/*ImageButton remove = (ImageButton) view.findViewById(mRemoveItemButtonId);
@@ -94,7 +92,7 @@ public class ContactFieldArrayAdapter extends BaseAdapter /*implements OnClickLi
 		
 		value.setText(item.getValue());
 		ensureRowRemovedWhenEmpty(position, value);
-		value.setOnClearListener(this);
+		value.setOnIconClickListener(this);
 		
 		
 		
@@ -139,13 +137,16 @@ public class ContactFieldArrayAdapter extends BaseAdapter /*implements OnClickLi
 	}
 
 	@Override
-	public void textCleared(View v) {
-		if (mItems.size() > 1) {
-			int position = (Integer) v.getTag();
-			mItems.remove(position);
-			notifyDataSetChanged();
-		} else {
-			mItems.get(0).mValue = "";
+	public void iconClicked(IconEditText v) {
+		if (v.getText().length() > 0) {
+			v.setText("");
+			if (mItems.size() > 1) {
+				int position = (Integer) v.getTag();
+				mItems.remove(position);
+				notifyDataSetChanged();
+			} else {
+				mItems.get(0).mValue = "";
+			}
 		}
 	}
 

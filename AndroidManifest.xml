@@ -6,10 +6,10 @@
 
     <uses-sdk
         android:minSdkVersion="15"
-        android:targetSdkVersion="17" />
-    
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.NFC"/>
+        android:targetSdkVersion="19" />
+
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.NFC" />
 
     <application
         android:allowBackup="true"
@@ -24,6 +24,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="pl.kamituel.nfcbusinesscardwriter.PickContactActivity"
+            android:launchMode="singleTop" >
         </activity>
     </application>
 
