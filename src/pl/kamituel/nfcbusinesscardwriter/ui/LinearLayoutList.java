@@ -1,23 +1,23 @@
 package pl.kamituel.nfcbusinesscardwriter.ui;
 
+import pl.kamituel.nfcbusinesscardwriter.ContactFieldArrayAdapter;
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 
 public class LinearLayoutList extends LinearLayout {
-	private ListAdapter mAdapter;
-	private DataSetObserverImpl mDataSetObserver;
+	private ContactFieldArrayAdapter mAdapter;
+	private CustomDataSetObserver mDataSetObserver;
 	
 	public LinearLayoutList(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		
-		mDataSetObserver = new DataSetObserverImpl();
+		mDataSetObserver = new CustomDataSetObserver();
 	}
 
-	public void setAdapter (ListAdapter adapter) {
+	public void setAdapter (ContactFieldArrayAdapter adapter) {
 		if (null != mAdapter) {
 			mAdapter.unregisterDataSetObserver(mDataSetObserver);
 		}
@@ -31,25 +31,23 @@ public class LinearLayoutList extends LinearLayout {
 	
 	protected void addAllFromAdapter() {
 		for (int v = 0; v < mAdapter.getCount(); v += 1) {
-			addView(mAdapter.getView(v, null, this));
+			View view = mAdapter.getView(v, null, this);
+			addView(view);
 		}
 	}
 	
-	private class DataSetObserverImpl extends DataSetObserver {
-		@Override
-		public void onChanged() {
-			super.onChanged();
-			
-			// TODO: optimize
-			removeAllViews();
-			addAllFromAdapter();
-		}
-
-		@Override
-		public void onInvalidated() {
-			// TODO Auto-generated method stub
-			super.onInvalidated();
+	public class CustomDataSetObserver {
+		public void onRemoved(int position) {
+			if (position < 0) {
+				removeAllViews();
+			} else {
+				removeViewAt(position);
+			}
 		}
 		
+		public void onAdded() {
+			Log.d("pl.kamituel", "eee2 " + mAdapter.getCount());
+			addView(mAdapter.getView(mAdapter.getCount() - 1, null, LinearLayoutList.this));
+		}
 	}
 }

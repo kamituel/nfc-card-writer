@@ -22,7 +22,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="@string/name"
-            android:singleLine="true"
             custom:icon="@drawable/ic_menu_search_holo_light" />
     </LinearLayout>
 
@@ -47,16 +46,6 @@
             android:layout_toRightOf="@id/phoneHeading"
             android:orientation="vertical" >
         </pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList>
-
-        <Button
-            android:id="@+id/addAnotherPhone"
-            style="@style/AddButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/phoneHeading"
-            android:layout_margin="0dp"
-            android:text="@string/add" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -80,14 +69,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
         </pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList>
-
-        <Button
-            android:id="@+id/addAnotherEmail"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/emailHeading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add" />
     </RelativeLayout>
 
 </LinearLayout>

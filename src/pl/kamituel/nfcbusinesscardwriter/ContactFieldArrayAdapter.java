@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import pl.kamituel.nfcbusinesscardwriter.ContactCursorHelper.ValueType;
 import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText;
 import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText.OnIconClickListener;
+import pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList.CustomDataSetObserver;
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -24,10 +26,10 @@ public class ContactFieldArrayAdapter extends BaseAdapter /*implements OnClickLi
 	
 	public static interface OnAddNewItemTextChangedListener {
 		void onTextInserted ();
-		void onTextRemoved();
 	}
 	
 	private OnAddNewItemTextChangedListener mAddNewItemPopulatedListener;
+	private CustomDataSetObserver mDataSetObserver;
 	
 	public ContactFieldArrayAdapter (Context ctx, int rootLayoutId, int editTextId) {
 		mInflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -37,15 +39,19 @@ public class ContactFieldArrayAdapter extends BaseAdapter /*implements OnClickLi
 	
 	public void add (ValueType item) {		
 		mItems.add(item);
-		notifyDataSetChanged();
+		notifyDataSetAdded();
 	}
 	
 	public void addAll(ValueType[] items) {
 		for (int i = items.length - 1; i >= 0; i -= 1) {
-			Log.d("xxx", "addding element " + items[i].getValue());
-			mItems.add(0, items[i]);
+			mItems.add(items[i]);
+			notifyDataSetAdded();
 		}
-		notifyDataSetChanged();
+	}
+	
+	public void removeAll() {
+		mItems.clear();
+		notifyDataSetRemoved(-1);
 	}
 	
 	@Override
@@ -73,33 +79,30 @@ public class ContactFieldArrayAdapter extends BaseAdapter /*implements OnClickLi
 		}
 	}
 	
-	protected void addNewItemEmptied() {
-		if (mAddNewItemPopulatedListener != null) {
-			mAddNewItemPopulatedListener.onTextRemoved();
-		}
-	}
-	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ValueType item = getItem(position);
-		View view = mInflater.inflate(mRootLayoutId, parent, false);
-		IconEditText value = (IconEditText) view.findViewById(mEditTextId);
-		value.setTag(position);
 		
-		/*ImageButton remove = (ImageButton) view.findViewById(mRemoveItemButtonId);
-		remove.setTag(position);
-		remove.setOnClickListener(this);*/
+		View view;
+		if (convertView == null) {
+			view = mInflater.inflate(mRootLayoutId, parent, false);
+		} else {
+			view = convertView;
+		}
 		
+		IconEditText value = (IconEditText) view.findViewById(mEditTextId);		
 		value.setText(item.getValue());
-		ensureRowRemovedWhenEmpty(position, value);
+		Log.d("pl.kamituel", position + " eee " + value.getText().toString() + " - " + mItems.size());
 		value.setOnIconClickListener(this);
 		
-		
+		value.setTag(item);
+		ensureRowRemovedWhenEmpty(value);
+
 		
 		return view;
 	}
 	
-	private void ensureRowRemovedWhenEmpty (final int position, EditText value) {
+	private void ensureRowRemovedWhenEmpty (final EditText value) {
 		value.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -116,9 +119,11 @@ public class ContactFieldArrayAdapter extends BaseAdapter /*implements OnClickLi
 			
 			@Override
 			public void afterTextChanged(Editable s) {
+				int position = mItems.indexOf(value.getTag());
+				
 				if (s.length() == 0 && mItems.size() > 1) {
 					mItems.remove(position);
-					notifyDataSetChanged();
+					notifyDataSetRemoved(position);
 				}
 				
 				if (s.length() > 0) {
@@ -127,10 +132,10 @@ public class ContactFieldArrayAdapter extends BaseAdapter /*implements OnClickLi
 					if (position == getCount() - 1) {
 						addNewItemPopulated();
 					}
-				} else {
+				/*} else {
 					if (getCount() == 1) {
 						addNewItemEmptied();
-					}
+					}*/
 				}
 			}
 		});
@@ -140,26 +145,27 @@ public class ContactFieldArrayAdapter extends BaseAdapter /*implements OnClickLi
 	public void iconClicked(IconEditText v) {
 		if (v.getText().length() > 0) {
 			v.setText("");
-			if (mItems.size() > 1) {
-				int position = (Integer) v.getTag();
-				mItems.remove(position);
-				notifyDataSetChanged();
-			} else {
-				mItems.get(0).mValue = "";
-			}
 		}
 	}
 
-	/*@Override
-	public void onClick(View v) {
-		int position = (Integer) v.getTag();
-		
-		if (mItems.size() > 1) {
-			mItems.remove(position);
-		} else {
-			mItems.get(0).mValue = "";
+	public void unregisterDataSetObserver(CustomDataSetObserver dataSetObserver) {
+		mDataSetObserver = dataSetObserver;
+	}
+
+	public void registerDataSetObserver(CustomDataSetObserver dataSetObserver) {
+		mDataSetObserver = dataSetObserver;
+	}
+
+	public void notifyDataSetAdded() {
+		Log.d("pl.kamituel", "???" + mDataSetObserver + " = " + mItems.size());
+		if (mDataSetObserver != null) {
+			mDataSetObserver.onAdded();
 		}
-		
-		notifyDataSetChanged();
-	}*/
+	}
+
+	public void notifyDataSetRemoved(int position) {
+		if (mDataSetObserver != null) {
+			mDataSetObserver.onRemoved(position);
+		}
+	}
 }

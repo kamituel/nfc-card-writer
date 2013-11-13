@@ -8,7 +8,10 @@ import pl.kamituel.nfcbusinesscardwriter.NdefContact.Builder;
 import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText;
 import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText.OnIconClickListener;
 import pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList;
+import android.app.ActionBar;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -17,11 +20,7 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -37,49 +36,53 @@ implements OnIconClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
+		ActionBar actionBar = getActionBar();
+		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33ffffff")));
+		actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#55ffffff")));
+
 		setContentView(R.layout.activity_main);
 
 		IconEditText name = (IconEditText) findViewById(R.id.nameEditText);
 		name.setOnIconClickListener(this);
 
 		mPhonesAdapter = new ContactFieldArrayAdapter(this, R.layout.contact_editor_field_phone, R.id.phoneEditText);
-		setupFieldList(R.id.phoneList, mPhonesAdapter, R.id.addAnotherPhone);
+		setupFieldList(R.id.phoneList, mPhonesAdapter);
 
 		mEmailsAdapter = new ContactFieldArrayAdapter(this, R.layout.contact_editor_field_email, R.id.emailEditText);
-		setupFieldList(R.id.emailList, mEmailsAdapter, R.id.addAnotherEmail);
+		setupFieldList(R.id.emailList, mEmailsAdapter);
 	}
 
-	private void setupFieldList (int listId, final ContactFieldArrayAdapter adapter, int addNewButtonId) {
+	private void setupFieldList (int listId, final ContactFieldArrayAdapter adapter) {
 		adapter.add(new ValueType("", ""));
 
-		final Button addNewItem = (Button) findViewById(addNewButtonId);
+		//final Button addNewItem = (Button) findViewById(addNewButtonId);
 		LinearLayoutList phones = (LinearLayoutList) findViewById(listId);
 		phones.setAdapter(adapter);
 
 		adapter.setAddNewItemPopulatedListener(new OnAddNewItemTextChangedListener() {
 			@Override
 			public void onTextInserted() {
-				addNewItem.setVisibility(View.VISIBLE);
-			}
-
-			@Override
-			public void onTextRemoved() {
-				addNewItem.setVisibility(View.GONE);
+				//addNewItem.setVisibility(View.VISIBLE);
+				adapter.add(new ValueType("", ""));
 			}
 		});
 
 
-		addNewItem.setVisibility(View.GONE);
+		/*addNewItem.setVisibility(View.GONE);
 		addNewItem.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				adapter.add(new ValueType("", ""));
 				addNewItem.setVisibility(View.GONE);
 			}
-		});	
+		});	*/
 	}
 	
 	private void populateEditorFields(ContactCursorHelper contact) {
+		clearEditorFields();
+		
 		((IconEditText) findViewById(R.id.nameEditText)).setText(contact.getDisplayName());
 		
 		ValueType[] phones = contact.getPhoneNumbers();
@@ -87,6 +90,14 @@ implements OnIconClickListener {
 
 		ValueType[] emails = contact.getEmailAddresses();
 		mEmailsAdapter.addAll(emails);
+		
+		mPhonesAdapter.add(new ValueType("", ""));
+		mEmailsAdapter.add(new ValueType("", ""));
+	}
+	
+	private void clearEditorFields() {
+		mPhonesAdapter.removeAll();
+		mEmailsAdapter.removeAll();
 	}
 
 	@Override
@@ -128,7 +139,7 @@ implements OnIconClickListener {
 	}
 
 
-	@Override
+	/*@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -144,7 +155,7 @@ implements OnIconClickListener {
 		default: 
 			return false;
 		}
-	}
+	}*/
 
 	private String getEditTextValue (int id) {
 		return ((EditText) findViewById(id)).getText().toString();
