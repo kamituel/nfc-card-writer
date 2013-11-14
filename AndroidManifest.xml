@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="pl.kamituel.nfcbusinesscardwriter.PickContactActivity"
+            android:name="pl.kamituel.nfcbusinesscardwriter.PickContactFragment"
             android:launchMode="singleTop" >
         </activity>
     </application>

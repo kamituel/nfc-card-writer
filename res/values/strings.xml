@@ -16,4 +16,6 @@
     <string name="write_nfc_tag">Zapisz tag NFC</string>
     <string name="write_nfc_tag_explanation">Zbliż tag NFC do tylnej ściany telefonu/tabletu.</string>
     <string name="nfc_tag_written">Wizytówka NFC zapisana pomyślnie</string>
+
+    <string name="filter_contacts_hint">Szukaj &#8230;</string>
 </resources>

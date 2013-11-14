@@ -1,37 +1,18 @@
 package pl.kamituel.nfcbusinesscardwriter;
 
-import java.io.IOException;
-
-import pl.kamituel.nfcbusinesscardwriter.ContactCursorHelper.ValueType;
-import pl.kamituel.nfcbusinesscardwriter.ContactFieldArrayAdapter.OnAddNewItemTextChangedListener;
-import pl.kamituel.nfcbusinesscardwriter.NdefContact.Builder;
-import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText;
-import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText.OnIconClickListener;
-import pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList;
+import pl.kamituel.nfcbusinesscardwriter.CardFormFragment.CardFormFragmentListener;
+import pl.kamituel.nfcbusinesscardwriter.PickContactFragment.PickContactFragmentListener;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.nfc.FormatException;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
-import android.nfc.NfcAdapter;
-import android.nfc.Tag;
-import android.nfc.tech.Ndef;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
-import android.widget.EditText;
-import android.widget.Toast;
 
-public class MainActivity extends NfcRequiredActivity 
-implements OnIconClickListener {
+public class MainActivity extends NfcRequiredActivity implements CardFormFragmentListener, PickContactFragmentListener {
 	private final static String TAG = MainActivity.class.getCanonicalName();
-
-	private ContactFieldArrayAdapter mPhonesAdapter;
-	private ContactFieldArrayAdapter mEmailsAdapter;
-
-	private final static int PICK_CONTACT_REQUEST_CODE = 1;
+	
+	private CardFormFragment mCardForm;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,67 +23,60 @@ implements OnIconClickListener {
 		actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#33ffffff")));
 		actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#55ffffff")));
 
-		setContentView(R.layout.activity_main);
-
-		IconEditText name = (IconEditText) findViewById(R.id.nameEditText);
-		name.setOnIconClickListener(this);
-
-		mPhonesAdapter = new ContactFieldArrayAdapter(this, R.layout.contact_editor_field_phone, R.id.phoneEditText);
-		setupFieldList(R.id.phoneList, mPhonesAdapter);
-
-		mEmailsAdapter = new ContactFieldArrayAdapter(this, R.layout.contact_editor_field_email, R.id.emailEditText);
-		setupFieldList(R.id.emailList, mEmailsAdapter);
-	}
-
-	private void setupFieldList (int listId, final ContactFieldArrayAdapter adapter) {
-		adapter.add(new ValueType("", ""));
-
-		//final Button addNewItem = (Button) findViewById(addNewButtonId);
-		LinearLayoutList phones = (LinearLayoutList) findViewById(listId);
-		phones.setAdapter(adapter);
-
-		adapter.setAddNewItemPopulatedListener(new OnAddNewItemTextChangedListener() {
-			@Override
-			public void onTextInserted() {
-				//addNewItem.setVisibility(View.VISIBLE);
-				adapter.add(new ValueType("", ""));
-			}
-		});
-
-
-		/*addNewItem.setVisibility(View.GONE);
-		addNewItem.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				adapter.add(new ValueType("", ""));
-				addNewItem.setVisibility(View.GONE);
-			}
-		});	*/
+		setContentView(R.layout.main);
+		
+		if (isOnSmallScreen()) {
+			mCardForm = new CardFormFragment();
+			getFragmentManager().beginTransaction().add(R.id.main_container, mCardForm).commit();
+		} else {
+			mCardForm = (CardFormFragment) getFragmentManager().findFragmentById(R.id.card_form_fragment);
+		}
 	}
 	
-	private void populateEditorFields(ContactCursorHelper contact) {
-		clearEditorFields();
-		
-		((IconEditText) findViewById(R.id.nameEditText)).setText(contact.getDisplayName());
-		
-		ValueType[] phones = contact.getPhoneNumbers();
-		mPhonesAdapter.addAll(phones);
-
-		ValueType[] emails = contact.getEmailAddresses();
-		mEmailsAdapter.addAll(emails);
-		
-		mPhonesAdapter.add(new ValueType("", ""));
-		mEmailsAdapter.add(new ValueType("", ""));
+	private boolean isOnSmallScreen() {
+		return findViewById(R.id.main_container) != null;
 	}
 	
-	private void clearEditorFields() {
-		mPhonesAdapter.removeAll();
-		mEmailsAdapter.removeAll();
+	/*@Override
+	public void searchContact(String displayName) {
+		PickContactFragment pickContact = (PickContactFragment)
+			getFragmentManager().findFragmentById(R.id.pick_contact_fragment);
+
+		if (pickContact != null) {
+			pickContact.startQuery(displayName);
+		} else {
+			pickContact = new PickContactFragment();
+			Bundle args = new Bundle();
+			args.putString(PickContactFragment.QUERY_BY_NAME, displayName);
+			pickContact.setArguments(args);
+			
+			getFragmentManager().beginTransaction()
+				.replace(R.id.main_container, pickContact)
+				.addToBackStack(null)
+				.commit();
+		}
+	}*/
+	
+	@Override
+	public void onContactPicked(String cursorLookupKey) {
+		ContactCursorHelper contact = ContactCursorHelper.byLookupKey(this, cursorLookupKey);
+				
+		mCardForm.setContact(contact);
+		
+		if (isOnSmallScreen()) {
+			switchBackToCardFormFragment();
+		} else {
+			mCardForm.fillForm();
+		}
+	}
+
+	private void switchBackToCardFormFragment() {
+		getFragmentManager().popBackStack();
 	}
 
 	@Override
 	protected void onNewIntent(Intent intent) {                          
-		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+		/*if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
 			Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 			NdefContact.Builder builder = new NdefContact.Builder()
 			.appendName(getEditTextValue(R.id.nameEditText));
@@ -135,8 +109,11 @@ implements OnIconClickListener {
 			}
 
 			Toast.makeText(this, getResources().getString(R.string.nfc_tag_written), Toast.LENGTH_SHORT).show();
-		}
+		}*/
 	}
+
+
+
 
 
 	/*@Override
@@ -157,27 +134,14 @@ implements OnIconClickListener {
 		}
 	}*/
 
-	private String getEditTextValue (int id) {
-		return ((EditText) findViewById(id)).getText().toString();
-	}
-
-	@Override
-	public void iconClicked(IconEditText v) {
-		if (R.id.nameEditText == v.getId()) {
-			Intent pickContact = new Intent(this, PickContactActivity.class);
-			pickContact.putExtra(PickContactActivity.QUERY_BY_NAME, v.getText().toString());
-			startActivityForResult(pickContact, PICK_CONTACT_REQUEST_CODE);
-		}
-	}
-
-	@Override
+	/*@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
 		switch (requestCode) {
 		case PICK_CONTACT_REQUEST_CODE:
 			if (RESULT_OK == resultCode) {
-				String contactLookupKey = data.getStringExtra(PickContactActivity.EXTRA_CONTACT_LOOKUP_KEY);
+				String contactLookupKey = data.getStringExtra(PickContactFragment.EXTRA_CONTACT_LOOKUP_KEY);
 				ContactCursorHelper contact = ContactCursorHelper.byLookupKey(this, contactLookupKey);
 				
 				Log.d(TAG, "Found " + contactLookupKey + contact.getDisplayName());
@@ -187,5 +151,5 @@ implements OnIconClickListener {
 		default:
 			Log.w("xxx", "Invalid request code: " + requestCode);
 		}
-	}
+	}*/
 }

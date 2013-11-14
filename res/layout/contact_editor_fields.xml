@@ -13,7 +13,7 @@
             style="@style/InputHeading"
             android:layout_width="@dimen/heading_width"
             android:layout_height="wrap_content"
-            android:text="Imię i nazwisko" />
+            android:text="@string/name" />
 
         <pl.kamituel.nfcbusinesscardwriter.ui.IconEditText
             android:id="@+id/nameEditText"
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="@string/name"
-            custom:icon="@drawable/ic_menu_search_holo_light" />
+            custom:icon="@drawable/ic_clear_normal" />
     </LinearLayout>
 
     <RelativeLayout
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:text="Telefon" />
+            android:text="@string/phone" />
 
         <pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList
             android:id="@+id/phoneList"
@@ -54,12 +54,12 @@
 
         <pl.kamituel.nfcbusinesscardwriter.ui.TypefacedTextView
             android:id="@+id/emailHeading"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
             style="@style/InputHeading"
             android:layout_width="@dimen/heading_width"
             android:layout_height="wrap_content"
-            android:text="Email" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/email" />
 
         <pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList
             android:id="@+id/emailList"
