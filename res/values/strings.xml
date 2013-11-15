@@ -18,4 +18,6 @@
     <string name="nfc_tag_written">Wizytówka NFC zapisana pomyślnie</string>
 
     <string name="filter_contacts_hint">Szukaj &#8230;</string>
+    
+    <string name="card_form_fragment_tag">card_form_fragment</string>
 </resources>

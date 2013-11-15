@@ -9,7 +9,8 @@
         android:id="@+id/card_form_fragment"
         android:layout_width="0dp"
         android:layout_weight="2"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:tag="@string/card_form_fragment_tag"/>
     
     <fragment android:name="pl.kamituel.nfcbusinesscardwriter.PickContactFragment"
         android:id="@+id/pick_contact_fragment"

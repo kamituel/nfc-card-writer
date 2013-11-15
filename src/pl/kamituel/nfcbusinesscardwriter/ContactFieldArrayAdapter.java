@@ -7,7 +7,6 @@ import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText;
 import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText.OnIconClickListener;
 import pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList.CustomDataSetObserver;
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;

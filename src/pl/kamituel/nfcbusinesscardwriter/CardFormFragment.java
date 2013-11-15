@@ -1,5 +1,8 @@
 package pl.kamituel.nfcbusinesscardwriter;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import pl.kamituel.nfcbusinesscardwriter.ContactCursorHelper.ValueType;
 import pl.kamituel.nfcbusinesscardwriter.ContactFieldArrayAdapter.OnAddNewItemTextChangedListener;
 import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText;
@@ -8,6 +11,8 @@ import pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +24,28 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 
 	private CardFormFragmentListener mParent;
 	private ContactCursorHelper mContact;
+	
+	private final static String BUNDLE_CONTACT_NAME = "contact-name";
+	private final static String BUNDLE_CONTACT_PHONES = "contact-phones";
+	private final static String BUNDLE_CONTACT_EMAILS = "contact-emails";
 
 	public interface CardFormFragmentListener {
 		//public void searchContact(String displayName);
 	}
+	
+	//TODO: do I need this?
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
 
+		try {
+			mParent = (CardFormFragmentListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException("Activity must implement " 
+					+ CardFormFragmentListener.class.getSimpleName() + " interface");
+		}
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -44,30 +66,58 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 		
 		return layout;
 	}
-	
+
+	private Bundle mSavedInstanceState;
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		
+		// For some reason, this throws an exception
+		/*if (savedInstanceState != null) {
+			populateEditorName(savedInstanceState.getString(BUNDLE_CONTACT_NAME));
+			
+			Parcelable[] phones = savedInstanceState.getParcelableArray(BUNDLE_CONTACT_PHONES);
+			populateEditorPhones(Arrays.copyOf(phones, phones.length, ValueType[].class));
+			
+			Parcelable[] emails = savedInstanceState.getParcelableArray(BUNDLE_CONTACT_EMAILS);
+			populateEditorEmails(Arrays.copyOf(emails, emails.length, ValueType[].class));
+		}*/
+		
+		// Workaround:
+		mSavedInstanceState = savedInstanceState;
+	}
+
 	@Override
 	public void onStart() {
 		super.onStart();
+
+		if (mSavedInstanceState != null) {
+			populateEditorName(mSavedInstanceState.getString(BUNDLE_CONTACT_NAME));
+			
+			Parcelable[] phones = mSavedInstanceState.getParcelableArray(BUNDLE_CONTACT_PHONES);
+			populateEditorPhones(Arrays.copyOf(phones, phones.length, ValueType[].class));
+			
+			Parcelable[] emails = mSavedInstanceState.getParcelableArray(BUNDLE_CONTACT_EMAILS);
+			populateEditorEmails(Arrays.copyOf(emails, emails.length, ValueType[].class));
+		}
 		
 		if (mContact != null) {
 			clearEditorFields();
 			populateEditorFields(mContact);
+			mContact = null;
 		} else {
 			mPhonesAdapter.add(new ValueType("", ""));
 			mEmailsAdapter.add(new ValueType("", ""));
 		}
 	}
 
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
 
-		try {
-			mParent = (CardFormFragmentListener) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException("Activity must implement " 
-					+ CardFormFragmentListener.class.getSimpleName() + " interface");
-		}
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+						
+		outState.putString(BUNDLE_CONTACT_NAME, getContactName());
+		outState.putParcelableArray(BUNDLE_CONTACT_PHONES, getContactPhones());
+		outState.putParcelableArray(BUNDLE_CONTACT_EMAILS, getContactEmails());
 	}
 
 	private void setupFieldList (LinearLayoutList list, final ContactFieldArrayAdapter adapter) {
@@ -98,16 +148,27 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 	}
 
 	private void populateEditorFields(ContactCursorHelper contact) {
-		((IconEditText) getView().findViewById(R.id.nameEditText)).setText(contact.getDisplayName());
-
-		ValueType[] phones = contact.getPhoneNumbers();
-		mPhonesAdapter.addAll(phones);
-
-		ValueType[] emails = contact.getEmailAddresses();
-		mEmailsAdapter.addAll(emails);
+		populateEditorName(contact.getDisplayName());
+		populateEditorPhones(contact.getPhoneNumbers());
+		populateEditorEmails(contact.getEmailAddresses());
 
 		mPhonesAdapter.add(new ValueType("", ""));
 		mEmailsAdapter.add(new ValueType("", ""));
+	}
+	
+	private void populateEditorPhones(ValueType[] phones) {
+		for (int p = 0; p < phones.length; p++) {
+			Log.e("xxx", "phone " + p + " = " + phones[p].mType + " -> " + phones[p].mValue);
+		}
+		mPhonesAdapter.addAll(phones);
+	}
+	
+	private void populateEditorEmails(ValueType[] emails) {
+		mEmailsAdapter.addAll(emails);
+	}
+	
+	private void populateEditorName(String name) {
+		((IconEditText) getView().findViewById(R.id.nameEditText)).setText(name);
 	}
 
 	private void clearEditorFields() {
@@ -124,16 +185,20 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 	}
 	
 	private static ValueType[] getAdapter(ContactFieldArrayAdapter adapter) {
-		ValueType[] arr = new ValueType[adapter.getCount()];
-		for (int p = 0; p < arr.length; p += 1) {
-			arr[p] = new ValueType(adapter.getItem(p).mValue, adapter.getItem(p).mValue);
+		ArrayList<ValueType> res = new ArrayList<ValueType>(adapter.getCount());
+		for (int p = 0; p < adapter.getCount(); p += 1) {
+			if (adapter.getItem(p).getValue().length() > 0) {
+				res.add(adapter.getItem(p));
+			}
 		}
 		
-		return arr;
+		return res.toArray(new ValueType[] {});
 	}
 
 	public String getContactName() {
 		return ((EditText) getView().findViewById(R.id.nameEditText)).getText().toString();
 	}
+	
+	
 
 }

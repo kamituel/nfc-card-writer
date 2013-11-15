@@ -26,8 +26,8 @@ import android.widget.Toast;
 public class MainActivity extends NfcRequiredActivity implements CardFormFragmentListener, PickContactFragmentListener {
 	private final static String TAG = MainActivity.class.getCanonicalName();
 
-	private CardFormFragment mCardForm;
-
+	private CardFormFragment mCardFormFragment;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,15 +38,21 @@ public class MainActivity extends NfcRequiredActivity implements CardFormFragmen
 		actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#55ffffff")));
 
 		setContentView(R.layout.main);
+		String cardFormFragmentTag = getResources().getString(R.string.card_form_fragment_tag);
+		
+		if (savedInstanceState == null) {
+			// On small screen, create fragment programatically
+			if (isOnSmallScreen()) {
+				getFragmentManager().beginTransaction().add(R.id.main_container, new CardFormFragment(), cardFormFragmentTag).commit();
+			}
+		}		
+	}
 
-		// On small screen, create fragment programatically
-		if (isOnSmallScreen()) {
-			mCardForm = new CardFormFragment();
-			getFragmentManager().beginTransaction().add(R.id.main_container, mCardForm).commit();
-		} else {
-			mCardForm = (CardFormFragment) getFragmentManager().findFragmentById(R.id.card_form_fragment);
-		}
-
+	@Override
+	protected void onResume() {
+		super.onResume();
+		String cardFormFragmentTag = getResources().getString(R.string.card_form_fragment_tag);
+		mCardFormFragment = (CardFormFragment) getFragmentManager().findFragmentByTag(cardFormFragmentTag);
 	}
 
 	private boolean isOnSmallScreen() {
@@ -56,13 +62,12 @@ public class MainActivity extends NfcRequiredActivity implements CardFormFragmen
 	@Override
 	public void onContactPicked(String cursorLookupKey) {
 		ContactCursorHelper contact = ContactCursorHelper.byLookupKey(this, cursorLookupKey);
-
-		mCardForm.setContact(contact);
+		mCardFormFragment.setContact(contact);
 
 		if (isOnSmallScreen()) {
 			switchBackToCardFormFragment();
 		} else {
-			mCardForm.fillForm();
+			mCardFormFragment.fillForm();
 		}
 	}
 
@@ -71,7 +76,7 @@ public class MainActivity extends NfcRequiredActivity implements CardFormFragmen
 	}
 
 	private void switchToPickContactFragment() {
-		mCardForm.setContact(null);
+		mCardFormFragment.setContact(null);
 
 		PickContactFragment pickContact = (PickContactFragment)
 				getFragmentManager().findFragmentById(R.id.pick_contact_fragment);
@@ -95,16 +100,16 @@ public class MainActivity extends NfcRequiredActivity implements CardFormFragmen
 			Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 			
 			NdefContact.Builder builder = new NdefContact.Builder()
-				.appendName(mCardForm.getContactName());
+				.appendName(mCardFormFragment.getContactName());
 
-			ValueType[] phones = mCardForm.getContactPhones();
+			ValueType[] phones = mCardFormFragment.getContactPhones();
 			for (int p = 0; p < phones.length; p += 1) {
 				if (phones[p].getValue().length() > 0) {
-					builder.appendPhone(Builder.PHONE_TYPE_HOME, phones[p].getValue());
+					builder.appendPhone(phones[p].getType(), phones[p].getValue());
 				}
 			}
 
-			ValueType[] emails = mCardForm.getContactEmails();
+			ValueType[] emails = mCardFormFragment.getContactEmails();
 			for (int e = 0; e < emails.length; e += 1) {
 				if (emails[e].getValue().length() > 0) {
 					builder.appendEmail(emails[e].getValue());

@@ -3,6 +3,8 @@ package pl.kamituel.nfcbusinesscardwriter;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.ContactsContract;
 
 public class ContactCursorHelper {
@@ -81,9 +83,14 @@ public class ContactCursorHelper {
 		return res;
 	}
 	
-	public static class ValueType {
+	public static class ValueType implements Parcelable {
 		protected String mValue;
 		protected String mType;
+		
+		public ValueType(Parcel source) {
+			mType = source.readString();
+			mValue = source.readString();
+		}
 		
 		public ValueType (String value, String type) {
 			mValue = value;
@@ -95,6 +102,29 @@ public class ContactCursorHelper {
 		}
 		String getType() {
 			return mType;
+		}
+
+		public static final Parcelable.Creator<ValueType> CREATOR = new Parcelable.Creator<ValueType>() {
+			@Override
+			public ValueType createFromParcel(Parcel source) {
+				return new ValueType(source);
+			}
+
+			@Override
+			public ValueType[] newArray(int size) {
+				return new ValueType[size];
+			}
+		};
+		
+		@Override
+		public int describeContents() {
+			return 0;
+		}
+
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			dest.writeString(mType);
+			dest.writeString(mValue);
 		}
 	}
 }
