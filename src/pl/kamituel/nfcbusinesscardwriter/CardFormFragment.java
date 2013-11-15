@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 public class CardFormFragment extends Fragment implements OnIconClickListener {
 	private ContactFieldArrayAdapter mPhonesAdapter;
@@ -112,6 +113,27 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 	private void clearEditorFields() {
 		mPhonesAdapter.removeAll();
 		mEmailsAdapter.removeAll();
+	}
+
+	public ValueType[] getContactPhones() {
+		return getAdapter(mPhonesAdapter);
+	}
+
+	public ValueType[] getContactEmails() {
+		return getAdapter(mEmailsAdapter);
+	}
+	
+	private static ValueType[] getAdapter(ContactFieldArrayAdapter adapter) {
+		ValueType[] arr = new ValueType[adapter.getCount()];
+		for (int p = 0; p < arr.length; p += 1) {
+			arr[p] = new ValueType(adapter.getItem(p).mValue, adapter.getItem(p).mValue);
+		}
+		
+		return arr;
+	}
+
+	public String getContactName() {
+		return ((EditText) getView().findViewById(R.id.nameEditText)).getText().toString();
 	}
 
 }
