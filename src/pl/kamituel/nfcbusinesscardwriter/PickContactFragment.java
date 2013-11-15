@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -14,6 +13,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -36,6 +37,13 @@ public class PickContactFragment extends Fragment implements OnItemClickListener
 	}
 	
 	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		setHasOptionsMenu(true);
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View layout = inflater.inflate(R.layout.pick_contact, container, false);
 		
@@ -56,28 +64,13 @@ public class PickContactFragment extends Fragment implements OnItemClickListener
 		
 		startQuery(null);
 	}
-
-	/*@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.pick_contact);
-		
-		ListView pickContact = (ListView) findViewById(R.id.pickContactListView);
-		mContactAdapter = new SimpleCursorAdapter(this, R.layout.name_autocomplete_item, null, new String[] {ContactsContract.Contacts.DISPLAY_NAME}, new int[] {R.id.name});
-		pickContact.setAdapter(mContactAdapter);
-		pickContact.setOnItemClickListener(this);
-		
-		startQuery(getIntent());
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		menu.removeItem(R.id.action_contacts);
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 
-	@Override
-	protected void onNewIntent(final Intent intent) {
-		super.onNewIntent(intent);
-		Log.d(TAG, "onNewIntent()");
-
-		startQuery(intent);
-	}*/
-	
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -120,7 +113,7 @@ public class PickContactFragment extends Fragment implements OnItemClickListener
 			case CONTACT_LOADER:
 				Uri uri =  ContactsContract.Contacts.CONTENT_URI;
 				String[] projection = null;
-				String selection = ContactsContract.Contacts.DISPLAY_NAME + " LIKE '%" + mQuery + "%'";
+				String selection = ContactsContract.Contacts.DISPLAY_NAME + " LIKE '%" + mQuery + "%' AND " + ContactsContract.Contacts.HAS_PHONE_NUMBER + "=1";
 				String[] selectionArgs = null;
 				String sortOrder = ContactsContract.Contacts.SORT_KEY_PRIMARY + " ASC";
 				
