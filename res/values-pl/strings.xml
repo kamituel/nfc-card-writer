@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Wizytówki NFC</string>
+    <string name="explanation">Wypełnij powyższe pola. Następnie przyłóż wizytówkę NFC do tylnej ściany tego telefonu lub tabletu, a wizytówka zostanie nadpisana.</string>
+    
+    <string name="name">Imię i nazwisko</string>
+    <string name="email">Email</string>
+    <string name="phone">Telefon</string>
+ 
+    <string name="no_nfc_present">Brak modułu NFC</string>
+    <string name="nfc_disabled">NFC wyłączone</string>
+        
+    <string name="nfc_tag_written">Wizytówka NFC zapisana pomyślnie</string>
+
+    <string name="filter_contacts_hint">Szukaj &#8230;</string>
+    
+    <string name="card_form_fragment_tag">card_form_fragment</string>
+</resources>

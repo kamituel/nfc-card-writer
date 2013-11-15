@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Wizytówki NFC</string>
-    <string name="explanation">Wypełnij powyższe pola. Następnie przyłóż wizytówkę NFC do tylnej ściany tego telefonu lub tabletu, a wizytówka zostanie nadpisana.</string>
+    <string name="app_name">NFC Business Cards</string>
+    <string name="explanation">Fill in from above. Then press NFC card against back of your device - business card will be written onto it.</string>
     
-    <string name="name">Imię i nazwisko</string>
+    <string name="name">Name</string>
     <string name="email">Email</string>
-    <string name="phone">Telefon</string>
+    <string name="phone">Phone</string>
  
-    <string name="no_nfc_present">Brak modułu NFC</string>
-    <string name="nfc_disabled">NFC wyłączone</string>
+    <string name="no_nfc_present">No NFC module</string>
+    <string name="nfc_disabled">NFC disabled</string>
     
-    <string name="add">Dodaj</string>
-    
-    <string name="write_nfc_tag">Zapisz tag NFC</string>
-    <string name="write_nfc_tag_explanation">Zbliż tag NFC do tylnej ściany telefonu/tabletu.</string>
-    <string name="nfc_tag_written">Wizytówka NFC zapisana pomyślnie</string>
+    <string name="nfc_tag_written">NFC tag writter successfully</string>
 
-    <string name="filter_contacts_hint">Szukaj &#8230;</string>
+    <string name="filter_contacts_hint">Search &#8230;</string>
     
     <string name="card_form_fragment_tag">card_form_fragment</string>
 </resources>
