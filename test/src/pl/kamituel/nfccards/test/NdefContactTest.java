@@ -1,8 +1,8 @@
-package pl.kamituel.nfcbusinesscardwriter.test;
+package pl.kamituel.nfccards.test;
 
 import android.nfc.NdefRecord;
 import junit.framework.TestCase;
-import pl.kamituel.nfcbusinesscardwriter.NdefContact;
+import pl.kamituel.nfccards.NdefContact;
 
 public class NdefContactTest extends TestCase {
 		

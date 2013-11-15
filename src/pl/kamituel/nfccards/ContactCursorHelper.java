@@ -1,4 +1,4 @@
-package pl.kamituel.nfcbusinesscardwriter;
+package pl.kamituel.nfccards;
 
 import android.content.Context;
 import android.database.Cursor;

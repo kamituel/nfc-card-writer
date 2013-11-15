@@ -1,4 +1,4 @@
-package pl.kamituel.nfcbusinesscardwriter;
+package pl.kamituel.nfccards;
 
 import java.nio.charset.Charset;
 

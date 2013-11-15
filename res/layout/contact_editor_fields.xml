@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/res/pl.kamituel.nfcbusinesscardwriter"
+    xmlns:custom="http://schemas.android.com/apk/res/pl.kamituel.nfccards"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:focusable="true"
@@ -11,13 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <pl.kamituel.nfcbusinesscardwriter.ui.TypefacedTextView
+        <pl.kamituel.nfccards.ui.TypefacedTextView
             style="@style/InputHeading"
             android:layout_width="@dimen/heading_width"
             android:layout_height="wrap_content"
             android:text="@string/name" />
 
-        <pl.kamituel.nfcbusinesscardwriter.ui.IconEditText
+        <pl.kamituel.nfccards.ui.IconEditText
             android:id="@+id/nameEditText"
             style="@style/Input"
             android:layout_width="0dp"
@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <pl.kamituel.nfcbusinesscardwriter.ui.TypefacedTextView
+        <pl.kamituel.nfccards.ui.TypefacedTextView
             android:id="@+id/phoneHeading"
             style="@style/InputHeading"
             android:layout_width="@dimen/heading_width"
@@ -40,21 +40,21 @@
             android:layout_alignParentTop="true"
             android:text="@string/phone" />
 
-        <pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList
+        <pl.kamituel.nfccards.ui.LinearLayoutList
             android:id="@+id/phoneList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@id/phoneHeading"
             android:orientation="vertical" >
-        </pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList>
+        </pl.kamituel.nfccards.ui.LinearLayoutList>
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
-        <pl.kamituel.nfcbusinesscardwriter.ui.TypefacedTextView
+        <pl.kamituel.nfccards.ui.TypefacedTextView
             android:id="@+id/emailHeading"
             style="@style/InputHeading"
             android:layout_width="@dimen/heading_width"
@@ -63,14 +63,14 @@
             android:layout_alignParentTop="true"
             android:text="@string/email" />
 
-        <pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList
+        <pl.kamituel.nfccards.ui.LinearLayoutList
             android:id="@+id/emailList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@id/emailHeading"
             android:orientation="vertical" >
-        </pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList>
+        </pl.kamituel.nfccards.ui.LinearLayoutList>
     </RelativeLayout>
 
 </LinearLayout>

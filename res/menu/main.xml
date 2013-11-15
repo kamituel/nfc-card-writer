@@ -5,6 +5,6 @@
         android:orderInCategory="100"
         android:showAsAction="always"
         android:icon="@drawable/ic_menu_search_holo_light"
-        android:title="@string/write_nfc_tag"/>
+        android:title="@string/find_contact"/>
 
 </menu>

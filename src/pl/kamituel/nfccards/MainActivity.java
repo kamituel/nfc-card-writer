@@ -1,11 +1,11 @@
-package pl.kamituel.nfcbusinesscardwriter;
+package pl.kamituel.nfccards;
 
 import java.io.IOException;
 
-import pl.kamituel.nfcbusinesscardwriter.CardFormFragment.CardFormFragmentListener;
-import pl.kamituel.nfcbusinesscardwriter.ContactCursorHelper.ValueType;
-import pl.kamituel.nfcbusinesscardwriter.NdefContact.Builder;
-import pl.kamituel.nfcbusinesscardwriter.PickContactFragment.PickContactFragmentListener;
+import pl.kamituel.nfccards.CardFormFragment.CardFormFragmentListener;
+import pl.kamituel.nfccards.ContactCursorHelper.ValueType;
+import pl.kamituel.nfccards.NdefContact.Builder;
+import pl.kamituel.nfccards.PickContactFragment.PickContactFragmentListener;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Intent;

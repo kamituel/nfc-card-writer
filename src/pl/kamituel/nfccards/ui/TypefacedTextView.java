@@ -1,6 +1,6 @@
-package pl.kamituel.nfcbusinesscardwriter.ui;
+package pl.kamituel.nfccards.ui;
 
-import pl.kamituel.nfcbusinesscardwriter.R;
+import pl.kamituel.nfccards.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;

@@ -14,6 +14,7 @@
     <string name="nfc_tag_written">NFC tag writter successfully</string>
 
     <string name="filter_contacts_hint">Search &#8230;</string>
+    <string name="find_contact">Contacts</string>
     
     <string name="card_form_fragment_tag">card_form_fragment</string>
 </resources>

@@ -1,11 +1,11 @@
-package pl.kamituel.nfcbusinesscardwriter;
+package pl.kamituel.nfccards;
 
 import java.util.ArrayList;
 
-import pl.kamituel.nfcbusinesscardwriter.ContactCursorHelper.ValueType;
-import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText;
-import pl.kamituel.nfcbusinesscardwriter.ui.IconEditText.OnIconClickListener;
-import pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList.CustomDataSetObserver;
+import pl.kamituel.nfccards.ContactCursorHelper.ValueType;
+import pl.kamituel.nfccards.ui.IconEditText;
+import pl.kamituel.nfccards.ui.IconEditText.OnIconClickListener;
+import pl.kamituel.nfccards.ui.LinearLayoutList.CustomDataSetObserver;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;

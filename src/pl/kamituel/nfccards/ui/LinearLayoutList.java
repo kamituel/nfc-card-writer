@@ -1,6 +1,6 @@
-package pl.kamituel.nfcbusinesscardwriter.ui;
+package pl.kamituel.nfccards.ui;
 
-import pl.kamituel.nfcbusinesscardwriter.ContactFieldArrayAdapter;
+import pl.kamituel.nfccards.ContactFieldArrayAdapter;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;

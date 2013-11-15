@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:custom="http://schemas.android.com/apk/res/pl.kamituel.nfcbusinesscardwriter"
+    xmlns:custom="http://schemas.android.com/apk/res/pl.kamituel.nfccards"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
@@ -12,7 +12,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity" >
 
-    <pl.kamituel.nfcbusinesscardwriter.ui.IconEditText
+    <pl.kamituel.nfccards.ui.IconEditText
         android:id="@+id/pickContactFilter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

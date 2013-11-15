@@ -1,4 +1,4 @@
-package pl.kamituel.nfcbusinesscardwriter.test;
+package pl.kamituel.nfccards.test;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

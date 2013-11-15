@@ -1,4 +1,4 @@
-package pl.kamituel.nfcbusinesscardwriter;
+package pl.kamituel.nfccards;
 
 import android.app.Activity;
 import android.app.Fragment;
