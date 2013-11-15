@@ -18,7 +18,7 @@ public class NdefContact {
 	}
 	
 	public NdefRecord toNdefRecord () {
-		byte[] vcard = mVcard.getBytes(Charset.forName("US-ASCII"));
+		byte[] vcard = mVcard.getBytes(Charset.forName("UTF-8"));
 		byte[] payload = new byte[vcard.length + 1];
 		System.arraycopy(vcard, 0, payload, 1, vcard.length); 
 		return new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "text/vcard".getBytes(), new byte[0], payload);
