@@ -3,6 +3,8 @@
     xmlns:custom="http://schemas.android.com/apk/res/pl.kamituel.nfcbusinesscardwriter"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -18,7 +20,7 @@
         <pl.kamituel.nfcbusinesscardwriter.ui.IconEditText
             android:id="@+id/nameEditText"
             style="@style/Input"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:hint="@string/name"
@@ -63,10 +65,10 @@
 
         <pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList
             android:id="@+id/emailList"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@id/emailHeading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/emailHeading"
             android:orientation="vertical" >
         </pl.kamituel.nfcbusinesscardwriter.ui.LinearLayoutList>
     </RelativeLayout>
