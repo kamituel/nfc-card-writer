@@ -29,6 +29,10 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 	private final static String BUNDLE_CONTACT_PHONES = "contact-phones";
 	private final static String BUNDLE_CONTACT_EMAILS = "contact-emails";
 
+	// I don't use onSaveInstanceState(), because it's not always called
+	// (i.e. when this fragment is being replaced using FragmentManager.replace()).
+	private Bundle mSavedInstanceState;
+	
 	public interface CardFormFragmentListener {
 		//public void searchContact(String displayName);
 	}
@@ -37,7 +41,7 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-
+		
 		try {
 			mParent = (CardFormFragmentListener) activity;
 		} catch (ClassCastException e) {
@@ -55,7 +59,7 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View layout = inflater.inflate(R.layout.card_form, container, false);
-
+				
 		mPhonesAdapter = new ContactFieldArrayAdapter(getActivity(), R.layout.contact_editor_field_phone, R.id.phoneEditText);
 		mEmailsAdapter = new ContactFieldArrayAdapter(getActivity(), R.layout.contact_editor_field_email, R.id.emailEditText);
 		setupFieldList((LinearLayoutList) layout.findViewById(R.id.phoneList), mPhonesAdapter);
@@ -64,32 +68,26 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 		IconEditText name = (IconEditText) layout.findViewById(R.id.nameEditText);
 		name.setOnIconClickListener(this);
 		
+		// Used on rotation.
+		if (savedInstanceState != null) {
+			mSavedInstanceState = savedInstanceState;
+		}
+		
 		return layout;
 	}
-
-	private Bundle mSavedInstanceState;
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
 		
-		// For some reason, this throws an exception
-		/*if (savedInstanceState != null) {
-			populateEditorName(savedInstanceState.getString(BUNDLE_CONTACT_NAME));
-			
-			Parcelable[] phones = savedInstanceState.getParcelableArray(BUNDLE_CONTACT_PHONES);
-			populateEditorPhones(Arrays.copyOf(phones, phones.length, ValueType[].class));
-			
-			Parcelable[] emails = savedInstanceState.getParcelableArray(BUNDLE_CONTACT_EMAILS);
-			populateEditorEmails(Arrays.copyOf(emails, emails.length, ValueType[].class));
-		}*/
-		
-		// Workaround:
-		mSavedInstanceState = savedInstanceState;
+		saveState(outState);
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
 
+		// Restore state on screen rotation
 		if (mSavedInstanceState != null) {
 			populateEditorName(mSavedInstanceState.getString(BUNDLE_CONTACT_NAME));
 			
@@ -109,15 +107,20 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 			mEmailsAdapter.add(new ValueType("", ""));
 		}
 	}
-
-
+	
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-						
-		outState.putString(BUNDLE_CONTACT_NAME, getContactName());
-		outState.putParcelableArray(BUNDLE_CONTACT_PHONES, getContactPhones());
-		outState.putParcelableArray(BUNDLE_CONTACT_EMAILS, getContactEmails());
+	public void onPause() {
+		super.onPause();
+
+		// Used when another fragments is being pushed in front of this one.
+		mSavedInstanceState = new Bundle();
+		saveState(mSavedInstanceState);
+	}
+	
+	private void saveState(Bundle bundle) {
+		bundle.putString(BUNDLE_CONTACT_NAME, getContactName());
+		bundle.putParcelableArray(BUNDLE_CONTACT_PHONES, getContactPhones());
+		bundle.putParcelableArray(BUNDLE_CONTACT_EMAILS, getContactEmails());
 	}
 
 	private void setupFieldList (LinearLayoutList list, final ContactFieldArrayAdapter adapter) {
