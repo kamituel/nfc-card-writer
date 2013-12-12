@@ -7,12 +7,16 @@
     <string name="name">Name</string>
     <string name="email">Email</string>
     <string name="phone">Phone</string>
+    <string name="organisation">Organisation</string>
+    <string name="title">Title</string>
  
     <string name="no_nfc_present">No NFC module</string>
     <string name="nfc_disabled">NFC disabled</string>
     
     <string name="nfc_tag_written">NFC tag written successfully</string>
-
+	<string name="nfc_tag_not_writable">Could not write tag. Maybe it\'s read-only?</string>
+    <string name="nfc_tag_not_supported">Tag not supported</string>
+    
     <string name="filter_contacts_hint">Search &#8230;</string>
     <string name="find_contact">Contacts</string>
     

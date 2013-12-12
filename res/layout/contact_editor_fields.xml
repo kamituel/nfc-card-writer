@@ -26,6 +26,46 @@
             android:hint="@string/name"
             custom:icon="@drawable/ic_clear_normal" />
     </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <pl.kamituel.nfccards.ui.TypefacedTextView
+            style="@style/InputHeading"
+            android:layout_width="@dimen/heading_width"
+            android:layout_height="wrap_content"
+            android:text="@string/organisation" />
+
+        <pl.kamituel.nfccards.ui.IconEditText
+            android:id="@+id/organisationEditText"
+            style="@style/Input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/organisation"
+            custom:icon="@drawable/ic_clear_normal" />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <pl.kamituel.nfccards.ui.TypefacedTextView
+            style="@style/InputHeading"
+            android:layout_width="@dimen/heading_width"
+            android:layout_height="wrap_content"
+            android:text="@string/title" />
+
+        <pl.kamituel.nfccards.ui.IconEditText
+            android:id="@+id/titleEditText"
+            style="@style/Input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/title"
+            custom:icon="@drawable/ic_clear_normal" />
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"

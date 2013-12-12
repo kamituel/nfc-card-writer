@@ -20,12 +20,14 @@ public class NdefContact {
 	public NdefRecord toNdefRecord () {
 		byte[] vcard = mVcard.getBytes(Charset.forName("UTF-8"));
 		byte[] payload = new byte[vcard.length + 1];
-		System.arraycopy(vcard, 0, payload, 1, vcard.length); 
+		System.arraycopy(vcard, 0, payload, 1, vcard.length);
+		Log.d("xxx", "NDEF: " + mVcard);
 		return new NdefRecord(NdefRecord.TNF_MIME_MEDIA, "text/vcard".getBytes(), new byte[0], payload);
 	}
 	
 	public static class Builder {
-		public static final String PHONE_TYPE_HOME = "HOME";
+		//public static final String PHONE_TYPE_HOME = "HOME";
+		public static final String PHONE_TYPE_WORK = "WORK";
 		
 		private StringBuilder mVcard = new StringBuilder();
 		
@@ -46,6 +48,16 @@ public class NdefContact {
 		public Builder appendEmail (String email) {
 			appendField("EMAIL", "PREF", "INTERNET", email);
 			return this;
+		}
+		
+		public Builder appendOrg(String org) {
+			appendField("ORG", org);
+			return this;
+		}
+		
+		public Builder appendTitle(String title) {
+			appendField("TITLE", title);
+			return  this;
 		}
 		
 		private Builder appendField (String fieldName, String... values) {

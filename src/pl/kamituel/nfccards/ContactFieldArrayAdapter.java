@@ -8,6 +8,7 @@ import pl.kamituel.nfccards.ui.IconEditText.OnIconClickListener;
 import pl.kamituel.nfccards.ui.LinearLayoutList.CustomDataSetObserver;
 import android.content.Context;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class ContactFieldArrayAdapter extends BaseAdapter /*implements OnClickListener*/ implements OnIconClickListener {	
 	private final ArrayList<ValueType> mItems = new ArrayList<ValueType>();
@@ -89,7 +91,7 @@ public class ContactFieldArrayAdapter extends BaseAdapter /*implements OnClickLi
 			view = convertView;
 		}
 		
-		IconEditText value = (IconEditText) view.findViewById(mEditTextId);		
+		IconEditText value = (IconEditText) view.findViewById(mEditTextId);
 		value.setText(item.getValue());
 		Log.d("pl.kamituel", position + " eee " + value.getText().toString() + " - " + mItems.size());
 		value.setOnIconClickListener(this);
@@ -118,7 +120,10 @@ public class ContactFieldArrayAdapter extends BaseAdapter /*implements OnClickLi
 			
 			@Override
 			public void afterTextChanged(Editable s) {
+				Object item = value.getTag();
 				int position = mItems.indexOf(value.getTag());
+				
+				Log.d("ccc", "text <<" + s.toString() + ">> position " + position);
 				
 				if (s.length() == 0 && mItems.size() > 1) {
 					mItems.remove(position);

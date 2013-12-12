@@ -7,12 +7,16 @@
     <string name="name">Imię i nazwisko</string>
     <string name="email">Email</string>
     <string name="phone">Telefon</string>
- 
+    <string name="organisation">Organizacja</string>
+    <string name="title">Stanowisko</string>
+    
     <string name="no_nfc_present">Brak modułu NFC</string>
     <string name="nfc_disabled">NFC wyłączone</string>
         
     <string name="nfc_tag_written">Wizytówka NFC zapisana pomyślnie</string>
-
+	<string name="nfc_tag_not_writable">Nie można zapisać taga. Potrzebujesz taga zapisywalnego.</string>
+    <string name="nfc_tag_not_supported">Twój telefon nie obsługuje tego taga NFC.</string>
+        
     <string name="filter_contacts_hint">Szukaj &#8230;</string>
     <string name="find_contact">Kontakty</string>
         

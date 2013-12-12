@@ -17,6 +17,7 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
+import android.nfc.tech.NdefFormatable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,7 +28,7 @@ public class MainActivity extends NfcRequiredActivity implements CardFormFragmen
 	private final static String TAG = MainActivity.class.getCanonicalName();
 
 	private CardFormFragment mCardFormFragment;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -39,7 +40,7 @@ public class MainActivity extends NfcRequiredActivity implements CardFormFragmen
 
 		setContentView(R.layout.main);
 		String cardFormFragmentTag = getResources().getString(R.string.card_form_fragment_tag);
-		
+
 		if (savedInstanceState == null) {
 			// On small screen, create fragment programatically
 			if (isOnSmallScreen()) {
@@ -95,36 +96,18 @@ public class MainActivity extends NfcRequiredActivity implements CardFormFragmen
 	}
 
 	@Override
-	protected void onNewIntent(Intent intent) {                          
+	protected void onNewIntent(Intent intent) {
+		//Toast.makeText(this, "action " + intent.getAction(), Toast.LENGTH_LONG).show();
 		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
 			Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-			
-			NdefContact.Builder builder = new NdefContact.Builder()
-				.appendName(mCardFormFragment.getContactName());
-
-			ValueType[] phones = mCardFormFragment.getContactPhones();
-			for (int p = 0; p < phones.length; p += 1) {
-				if (phones[p].getValue().length() > 0) {
-					builder.appendPhone(phones[p].getType(), phones[p].getValue());
-				}
-			}
-
-			ValueType[] emails = mCardFormFragment.getContactEmails();
-			for (int e = 0; e < emails.length; e += 1) {
-				if (emails[e].getValue().length() > 0) {
-					builder.appendEmail(emails[e].getValue());
-				}
-			}
-
-			NdefRecord[] records = { builder.build().toNdefRecord() };
-			NdefMessage message = new NdefMessage(records);
 
 			Ndef ndef = Ndef.get(tag);
 			try {
+				NdefMessage message = getNdefMessage();
 				ndef.connect();
 				ndef.writeNdefMessage(message);
 			} catch (IOException e) {
-				Toast.makeText(this, "ERR#1 " + e.getMessage(), Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, getString(R.string.nfc_tag_not_writable), Toast.LENGTH_SHORT).show();
 			} catch (FormatException e) {
 				Toast.makeText(this, "ERR#2 " + e.getMessage(), Toast.LENGTH_SHORT).show();
 			} finally {
@@ -132,7 +115,63 @@ public class MainActivity extends NfcRequiredActivity implements CardFormFragmen
 			}
 
 			Toast.makeText(this, getResources().getString(R.string.nfc_tag_written), Toast.LENGTH_SHORT).show();
+		} else if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
+			Tag tag = (Tag) intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+			NdefFormatable formatable = NdefFormatable.get(tag);
+			
+			if (formatable == null) {
+				Toast.makeText(this, R.string.nfc_tag_not_supported, Toast.LENGTH_LONG).show();
+				return;
+			}
+			
+			try {
+				NdefMessage message = getNdefMessage();
+				formatable.connect();
+				formatable.format(message);
+				formatable.close();
+			} catch (IOException e) {
+				Toast.makeText(this, "ERR#3 " + e.getMessage(), Toast.LENGTH_SHORT).show();
+			} catch (FormatException e) {
+				Toast.makeText(this, "ERR#4 " + e.getMessage(), Toast.LENGTH_SHORT).show();
+			} finally {
+				try { formatable.close(); } catch (Exception e) {}
+			}
 		}
+	}
+
+	private NdefMessage getNdefMessage() {
+		NdefContact.Builder builder = new NdefContact.Builder()
+		.appendName(mCardFormFragment.getContactName());
+
+		ValueType[] phones = mCardFormFragment.getContactPhones();
+		for (int p = 0; p < phones.length; p += 1) {
+			if (phones[p].getValue().length() > 0) {
+				builder.appendPhone(phones[p].getType(), phones[p].getValue());
+			}
+		}
+
+		ValueType[] emails = mCardFormFragment.getContactEmails();
+		for (int e = 0; e < emails.length; e += 1) {
+			if (emails[e].getValue().length() > 0) {
+				builder.appendEmail(emails[e].getValue());
+			}
+		}
+
+		String organisation = mCardFormFragment.getContactOrganisation();
+		if (organisation.length() > 0) {
+			builder.appendOrg(organisation);
+		}
+		
+		String title = mCardFormFragment.getContactTitle();
+		if (title.length() > 0) {
+			builder.appendTitle(title);
+		}
+		
+		NdefRecord[] records = { builder.build().toNdefRecord() };
+		NdefMessage message = new NdefMessage(records);
+	
+		
+		return message;
 	}
 
 	@Override

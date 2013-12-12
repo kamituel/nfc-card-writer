@@ -92,9 +92,11 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 			populateEditorName(mSavedInstanceState.getString(BUNDLE_CONTACT_NAME));
 			
 			Parcelable[] phones = mSavedInstanceState.getParcelableArray(BUNDLE_CONTACT_PHONES);
+			mPhonesAdapter.removeAll();
 			populateEditorPhones(Arrays.copyOf(phones, phones.length, ValueType[].class));
 			
 			Parcelable[] emails = mSavedInstanceState.getParcelableArray(BUNDLE_CONTACT_EMAILS);
+			mEmailsAdapter.removeAll();
 			populateEditorEmails(Arrays.copyOf(emails, emails.length, ValueType[].class));
 		}
 		
@@ -103,7 +105,7 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 			populateEditorFields(mContact);
 			mContact = null;
 		} else {
-			mPhonesAdapter.add(new ValueType("", ""));
+			mPhonesAdapter.add(new ValueType("", NdefContact.Builder.PHONE_TYPE_WORK));
 			mEmailsAdapter.add(new ValueType("", ""));
 		}
 	}
@@ -129,7 +131,11 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 		adapter.setAddNewItemPopulatedListener(new OnAddNewItemTextChangedListener() {
 			@Override
 			public void onTextInserted() {
-				adapter.add(new ValueType("", ""));
+				if (adapter == mPhonesAdapter) {
+					adapter.add(new ValueType("", NdefContact.Builder.PHONE_TYPE_WORK));
+				} else {
+					adapter.add(new ValueType("", ""));
+				}
 			}
 		});
 	}
@@ -155,7 +161,7 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 		populateEditorPhones(contact.getPhoneNumbers());
 		populateEditorEmails(contact.getEmailAddresses());
 
-		mPhonesAdapter.add(new ValueType("", ""));
+		mPhonesAdapter.add(new ValueType("", NdefContact.Builder.PHONE_TYPE_WORK));
 		mEmailsAdapter.add(new ValueType("", ""));
 	}
 	
@@ -200,6 +206,15 @@ public class CardFormFragment extends Fragment implements OnIconClickListener {
 
 	public String getContactName() {
 		return ((EditText) getView().findViewById(R.id.nameEditText)).getText().toString();
+	}
+
+	public String getContactOrganisation() {
+		return ((EditText) getView().findViewById(R.id.organisationEditText)).getText().toString();
+	}
+
+	public String getContactTitle() {
+		return ((EditText) getView().findViewById(R.id.titleEditText)).getText().toString();
+
 	}
 	
 	
